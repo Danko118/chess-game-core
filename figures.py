@@ -3,10 +3,6 @@ from utils import (
     Color,
     Position,
 )
-from const import (
-     BOARD_HEIGHT,
-     BOARD_WIDTH,
-)
 
 
 class Figure:
@@ -30,7 +26,7 @@ class Figure:
     def get_marker(
               self,
     ) -> str:
-         return ''
+         return 'F'
 
 
     def move_to(
