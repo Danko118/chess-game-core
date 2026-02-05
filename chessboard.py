@@ -48,7 +48,7 @@ class Cell:
             self,
     ) -> None:
         self.figure = None
-    
+
 
 class Line:
     def __init__(
@@ -78,8 +78,10 @@ class Line:
     def get_cell(
             self,
             cell_position,
-    ) -> list:
-        return self.cells[cell_position]
+    ) -> Optional[Cell]:
+        if cell_position < len(self.cells):
+            return self.cells[cell_position]
+        return None
 
 
 class Chessboard:
@@ -99,7 +101,7 @@ class Chessboard:
     def get_cell(
             self,
             position: Position,
-    ) -> Cell:
+    ) -> Optional[Cell]:
         return self.board[position.y].get_cell(position.x)
 
 
@@ -117,16 +119,6 @@ class Chessboard:
         for line in self.board:
             for cell in line.cells:
                 cell.ability = False
-
-
-    def get_figure_by_id(
-            self,
-            figure_id: int,
-    ) -> Optional[Figure]:
-        for figure in self.figures:
-            if figure.id == figure_id:
-                return figure
-        return None
 
 
     def check_figure_abilities(

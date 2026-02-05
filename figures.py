@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import List
 from utils import (
     Color,
@@ -5,16 +6,27 @@ from utils import (
 )
 
 
+class Figure_type(Enum):
+    PAWN = 0
+    ROOK = 1
+    KNIGHT = 2
+    BISHOP = 3
+    KING = 4
+    QUEEN = 5
+
+
 class Figure:
     def __init__(
             self,
             id: int,
             color: Color,
+            figure_type: Figure_type,
         ):
         self.id = id
         self.cell = None
         self.hasmove = False
         self.color = color
+        self.figure_type = figure_type
 
 
     def __str__(

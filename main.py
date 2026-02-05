@@ -7,11 +7,18 @@ from drawer import (
 from secretary import (
     Secretary,
 )
+from judge import (
+    Judge,
+)
 
 
 # разный трэш
 drawer = Drawer()
 some_board = Chessboard()
-secretary = Secretary(some_board)
+judge = Judge()
+secretary = Secretary(some_board, judge)
 secretary.start_up()
-drawer.draw_chessboard(secretary.board)
+_pawn = secretary.get_figure_by_id(1)
+if _pawn:
+    secretary.check_figure_abilities(_pawn)
+drawer.draw_chessboard(secretary.chessboard)
