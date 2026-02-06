@@ -66,7 +66,32 @@ class Judge:
                     board,
                 )
 
-        return False
+
+        if figure.figure_type == Figure_type.BISHOP:
+                return self.check_bishop(
+                    figure.cell.position,
+                    figure.hasmove,
+                    figure.color,
+                    board,
+                )
+        
+        if figure.figure_type == Figure_type.KING:
+                return self.check_king(
+                    figure.cell.position,
+                    figure.hasmove,
+                    figure.color,
+                    board,
+                )
+
+        if figure.figure_type == Figure_type.QUEEN:
+                return self.check_queen(
+                    figure.cell.position,
+                    figure.hasmove,
+                    figure.color,
+                    board,
+                )
+
+        return []
     
 
     def check_cell(
@@ -87,6 +112,70 @@ class Judge:
             return cell
         
         return None
+    
+
+    def get_diagonal_moves(
+            self,
+            original_position: Position,
+            color: Color,
+            diagonals: List[tuple],
+            width: int,
+            height: int,
+            board: Chessboard,
+    ) -> List[Optional[Cell]]:
+        result: List[Optional[Cell]] = []
+
+        for dx, dy in diagonals:
+            x = original_position.x
+            y = original_position.y
+            while True:
+                x += dx
+                y += dy
+                if not (0 <= x < width and 0 <= y < height):
+                    break
+                cell = board.get_cell(Position(x, y))
+                _figure = cell.get()
+                if _figure:
+                    if _figure.color != color:
+                        result.append(cell)
+                    break
+                result.append(cell)
+        
+        return result
+    
+
+    def get_square_moves(
+            self,
+            original_position: Position,
+            color: Color,
+            width: int,
+            height: int,
+            board: Chessboard,
+    ) -> List[Optional[Cell]]:
+        result: List[Optional[Cell]] = []
+
+        for dx in range(-1,2):
+            for dy in range(-1,2):
+                _dx = original_position.x + dx
+                _dy = original_position.y + dy
+
+                if not (0 <= _dx < width and 0 <= _dy < height):
+                    continue
+
+                _cell = board.get_cell(Position(_dx, _dy))
+
+                if not _cell: continue
+                
+                _figure = _cell.get()
+
+                if not _figure: 
+                    result.append(_cell)
+                    continue
+                
+                if _figure.color != color: result.append(_cell)
+        
+        return result
+
 
 
     def check_pawn(
@@ -170,76 +259,92 @@ class Judge:
             color: Color,
             board: Chessboard,
     ) -> List[Cell]:
+
+        avaliable_cells: List[Optional[Cell]] = self.get_diagonal_moves(
+            figure_position,
+            color,
+            [(0, 1), (0, -1), (1, 0), (-1, 0)],
+            BOARD_WIDTH,
+            BOARD_HEIGHT,
+            board,
+        )
+
+        return [_ for _ in avaliable_cells if _]
+    
+
+    def check_bishop(
+            self,
+            figure_position: Position,
+            hasmove: bool,
+            color: Color,
+            board: Chessboard,
+    ) -> List[Cell]:
+
+        avaliable_cells: List[Optional[Cell]] = self.get_diagonal_moves(
+            figure_position,
+            color,
+            [(1, 1), (1, -1), (-1, 1), (-1, -1)],
+            BOARD_WIDTH,
+            BOARD_HEIGHT,
+            board,
+        )
+
+        return [_ for _ in avaliable_cells if _]
+    
+
+    def check_king(
+            self,
+            figure_position: Position,
+            hasmove: bool,
+            color: Color,
+            board: Chessboard,
+    ) -> List[Cell]:
+        
+        avaliable_cells: List[Optional[Cell]] = self.get_square_moves(
+            figure_position,
+            color,
+            BOARD_WIDTH,
+            BOARD_HEIGHT,
+            board,
+        )
+
+        return [_ for _ in avaliable_cells if _]
+    
+
+    def check_queen(
+            self,
+            figure_position: Position,
+            hasmove: bool,
+            color: Color,
+            board: Chessboard,
+    ) -> List[Cell]:
+        
         avaliable_cells: List[Optional[Cell]] = []
-
-        for _cell_pos in range(figure_position.y + 1, BOARD_HEIGHT):
-            _cell = board.get_cell(
-                Position(
-                    figure_position.x,
-                    _cell_pos,
-                )
-            )
-            _figure = _cell.get()
-
-            if _figure and _figure.color != color:
-                avaliable_cells.append(_cell)
-            
-            if not _figure:
-                avaliable_cells.append(_cell)
-            else:
-                break
         
-        for _cell_pos in range(figure_position.y - 1, -1, -1):
-            _cell = board.get_cell(
-                Position(
-                    figure_position.x,
-                    _cell_pos,
-                )
-            )
-            _figure = _cell.get()
+        avaliable_cells += self.get_square_moves(
+            figure_position,
+            color,
+            BOARD_WIDTH,
+            BOARD_HEIGHT,
+            board,
+        )
 
-            if _figure and _figure.color != color:
-                avaliable_cells.append(_cell)
-            
-            if not _figure:
-                avaliable_cells.append(_cell)
-            else:
-                break
-        
-        for _cell_pos in range(figure_position.x + 1, BOARD_WIDTH):
-            _cell = board.get_cell(
-                Position(
-                    _cell_pos,
-                    figure_position.y,
-                )
-            )
-            _figure = _cell.get()
+        avaliable_cells += self.get_diagonal_moves(
+            figure_position,
+            color,
+            [(0, 1), (0, -1), (1, 0), (-1, 0)],
+            BOARD_WIDTH,
+            BOARD_HEIGHT,
+            board,
+        )
 
-            if _figure and _figure.color != color:
-                avaliable_cells.append(_cell)
-            
-            if not _figure:
-                avaliable_cells.append(_cell)
-            else:
-                break
-        
-        for _cell_pos in range(figure_position.x -1, -1, -1):
-            _cell = board.get_cell(
-                Position(
-                    _cell_pos,
-                    figure_position.y,
-                )
-            )
-            _figure = _cell.get()
-
-            if _figure and _figure.color != color:
-                avaliable_cells.append(_cell)
-            
-            if not _figure:
-                avaliable_cells.append(_cell)
-            else:
-                break
-
-        
+        avaliable_cells += self.get_diagonal_moves(
+            figure_position,
+            color,
+            [(1, 1), (1, -1), (-1, 1), (-1, -1)],
+            BOARD_WIDTH,
+            BOARD_HEIGHT,
+            board,
+        )
 
         return [_ for _ in avaliable_cells if _]

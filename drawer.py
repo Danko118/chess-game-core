@@ -1,7 +1,9 @@
 from chessboard import (
     Chessboard,
-    Line,
-    Cell,
+)
+from figures import (
+    Figure,
+    Figure_type,
 )
 from utils import (
     ChessboardNumbers,
@@ -30,8 +32,22 @@ class Drawer:
             for cell in chessboard.board[_line].cells:
                 cell_marker =  ' ' if cell.color.value else '#'
                 
-                if cell.figure:
-                    cell_marker =  cell.figure.get_marker()
+                _figure: Figure = cell.figure
+                if _figure:
+                    _figure_type: Figure_type = _figure.figure_type
+
+                    if _figure_type == Figure_type.PAWN:
+                        cell_marker = 'P'
+                    if _figure_type == Figure_type.BISHOP:
+                        cell_marker = 'B'
+                    if _figure_type == Figure_type.ROOK:
+                        cell_marker = 'R'
+                    if _figure_type == Figure_type.QUEEN:
+                        cell_marker = 'Q'
+                    if _figure_type == Figure_type.KING:
+                        cell_marker = 'K'
+                    if _figure_type == Figure_type.KNIGHT:
+                        cell_marker = 'N'
 
                 if cell.ability:
                     cell_marker =  'A'

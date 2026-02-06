@@ -17,7 +17,7 @@ class Cell:
             position: Position,
             line,
     ):
-        self.figure: Figure = None
+        self.figure: Optional[Figure] = None
         self.line = line
         self.position: Position = position
         self.color: Color = Color.WHITE if (self.position.x + self.position.y) & 1 else Color.BLACK
@@ -32,7 +32,7 @@ class Cell:
 
     def get(
             self
-    ) -> Figure:
+    ) -> Optional[Figure]:
         return self.figure
 
 

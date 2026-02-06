@@ -33,12 +33,6 @@ class Figure:
             self,
     ) -> str:
         return f'Фигура: {self.get_marker()} \nID: {self.id} \nПозиция: {self.cell.position}'
-    
-
-    def get_marker(
-              self,
-    ) -> str:
-         return 'F'
 
 
     def move_to(
