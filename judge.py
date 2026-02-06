@@ -11,6 +11,10 @@ from chessboard import (
     Cell,
     Chessboard,
 )
+from const import (
+    BOARD_WIDTH,
+    BOARD_HEIGHT,
+)
 
 
 class Judge:
@@ -31,15 +35,12 @@ class Judge:
             _to_cell: Cell,
     ) -> bool:
 
-        if figure.figure_type == Figure_type.PAWN:
-            if _to_cell in self.check_pawn(
-                figure.cell.position,
-                figure.hasmove,
-                board,
-            ):
-                return True
+        _cells = self.get_all_figure_moves(
+            board,
+            figure,
+        )
 
-        return False
+        return _to_cell in _cells
 
 
     def get_all_figure_moves(
@@ -50,6 +51,15 @@ class Judge:
 
         if figure.figure_type == Figure_type.PAWN:
                 return self.check_pawn(
+                    figure.cell.position,
+                    figure.hasmove,
+                    figure.color,
+                    board,
+                )
+        
+
+        if figure.figure_type == Figure_type.ROOK:
+                return self.check_rook(
                     figure.cell.position,
                     figure.hasmove,
                     figure.color,
@@ -148,6 +158,88 @@ class Judge:
                 color,
             )
         )
+        
+
+        return [_ for _ in avaliable_cells if _]
+
+
+    def check_rook(
+            self,
+            figure_position: Position,
+            hasmove: bool,
+            color: Color,
+            board: Chessboard,
+    ) -> List[Cell]:
+        avaliable_cells: List[Optional[Cell]] = []
+
+        for _cell_pos in range(figure_position.y + 1, BOARD_HEIGHT):
+            _cell = board.get_cell(
+                Position(
+                    figure_position.x,
+                    _cell_pos,
+                )
+            )
+            _figure = _cell.get()
+
+            if _figure and _figure.color != color:
+                avaliable_cells.append(_cell)
+            
+            if not _figure:
+                avaliable_cells.append(_cell)
+            else:
+                break
+        
+        for _cell_pos in range(figure_position.y - 1, -1, -1):
+            _cell = board.get_cell(
+                Position(
+                    figure_position.x,
+                    _cell_pos,
+                )
+            )
+            _figure = _cell.get()
+
+            if _figure and _figure.color != color:
+                avaliable_cells.append(_cell)
+            
+            if not _figure:
+                avaliable_cells.append(_cell)
+            else:
+                break
+        
+        for _cell_pos in range(figure_position.x + 1, BOARD_WIDTH):
+            _cell = board.get_cell(
+                Position(
+                    _cell_pos,
+                    figure_position.y,
+                )
+            )
+            _figure = _cell.get()
+
+            if _figure and _figure.color != color:
+                avaliable_cells.append(_cell)
+            
+            if not _figure:
+                avaliable_cells.append(_cell)
+            else:
+                break
+        
+        for _cell_pos in range(figure_position.x -1, -1, -1):
+            _cell = board.get_cell(
+                Position(
+                    _cell_pos,
+                    figure_position.y,
+                )
+            )
+            _figure = _cell.get()
+
+            if _figure and _figure.color != color:
+                avaliable_cells.append(_cell)
+            
+            if not _figure:
+                avaliable_cells.append(_cell)
+            else:
+                break
+
         
 
         return [_ for _ in avaliable_cells if _]
