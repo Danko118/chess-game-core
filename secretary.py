@@ -87,7 +87,7 @@ class Secretary:
                 Figure(
                     2,
                     Color.WHITE,
-                    Figure_type.QUEEN,
+                    Figure_type.KNIGHT,
                 ),
                 Position(4,1),
             ),

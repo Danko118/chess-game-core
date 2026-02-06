@@ -90,6 +90,15 @@ class Judge:
                     figure.color,
                     board,
                 )
+        
+
+        if figure.figure_type == Figure_type.KNIGHT:
+                return self.check_knight(
+                    figure.cell.position,
+                    figure.hasmove,
+                    figure.color,
+                    board,
+                )
 
         return []
     
@@ -98,13 +107,14 @@ class Judge:
             self,
             cell: Optional[Cell],
             has_to_eat: bool,
+            pawn: bool,
             color: Color,
     ) -> Optional[Cell]:
         if not cell:
             return None
         
         if not cell.figure:
-            if has_to_eat:
+            if has_to_eat and pawn:
                 return None
             return cell
         
@@ -198,6 +208,7 @@ class Judge:
             self.check_cell(
                 board.get_cell(_tmp_pos),
                 False,
+                True,
                 color,
             )
         )
@@ -214,6 +225,7 @@ class Judge:
                 self.check_cell(
                     board.get_cell(_tmp_pos),
                     False,
+                    True,
                     color,
                 )
             )
@@ -229,6 +241,7 @@ class Judge:
             self.check_cell(
                 board.get_cell(_tmp_pos),
                 True,
+                True,
                 color,
             )
         )
@@ -243,6 +256,7 @@ class Judge:
         avaliable_cells.append(
             self.check_cell(
                 board.get_cell(_tmp_pos),
+                True,
                 True,
                 color,
             )
@@ -345,6 +359,39 @@ class Judge:
             BOARD_WIDTH,
             BOARD_HEIGHT,
             board,
+        )
+
+        return [_ for _ in avaliable_cells if _]
+
+
+    def check_knight(
+            self,
+            figure_position: Position,
+            hasmove: bool,
+            color: Color,
+            board: Chessboard,
+    ) -> List[Cell]:
+        avaliable_cells: List[Optional[Cell]] = []
+        
+        _positions: List[Position] = [
+             Position(figure_position.x + 2, figure_position.y + 1),
+             Position(figure_position.x + 2, figure_position.y - 1),
+             Position(figure_position.x - 2, figure_position.y + 1),
+             Position(figure_position.x - 2, figure_position.y - 1),
+             Position(figure_position.x + 1, figure_position.y + 2),
+             Position(figure_position.x - 1, figure_position.y + 2),
+             Position(figure_position.x + 1, figure_position.y - 2),
+             Position(figure_position.x - 1, figure_position.y - 2),
+        ]
+
+        for _position in _positions:
+            avaliable_cells.append(
+                self.check_cell(
+                    board.get_cell(_position),
+                    True,
+                    False,
+                    color,
+                )
         )
 
         return [_ for _ in avaliable_cells if _]
